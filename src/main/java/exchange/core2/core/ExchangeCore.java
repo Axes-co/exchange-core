@@ -256,7 +256,7 @@ public final class ExchangeCore {
      * @param timeUnit the unit the timeOut is specified in
      */
     public synchronized void shutdown(final long timeout, final TimeUnit timeUnit) {
-        if (!stopped) {
+        do {
             stopped = true;
             // TODO stop accepting new events first
             try {
@@ -267,7 +267,7 @@ public final class ExchangeCore {
             } catch (TimeoutException e) {
                 throw new IllegalStateException("could not stop a disruptor gracefully. Not all events may be executed.");
             }
-        }
+        } while(!stopped);
     }
 
     private static EventHandler<OrderCommand>[] arraysAddHandler(EventHandler<OrderCommand>[] handlers, EventHandler<OrderCommand> extraHandler) {
